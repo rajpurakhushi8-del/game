@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TubeTitle Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Theme tokens ---------- */
+:root{--bg:#f3f4fb;--card:rgba(255,255,255,.72);--bd:rgba(110,110,160,.25);--tx:#1a1b2e;--mu:#6a6c85;--in:rgba(255,255,255,.9);--ac:#ff2d55;--ac2:#7c3aed;--ok:#16a34a;--wn:#d97706;--bad:#dc2626;color-scheme:light;box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0e1a;--card:rgba(30,32,54,.65);--bd:rgba(150,150,210,.22);--tx:#eef0ff;--mu:#9a9cbc;--in:rgba(15,16,32,.7);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d0e1a;--card:rgba(30,32,54,.65);--bd:rgba(150,150,210,.22);--tx:#eef0ff;--mu:#9a9cbc;--in:rgba(15,16,32,.7);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;
+background-image:radial-gradient(600px 400px at 10% -5%,rgba(255,45,85,.22),transparent),radial-gradient(600px 400px at 100% 10%,rgba(124,58,237,.22),transparent);background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.logo{font-weight:700;font-size:1.15rem;display:flex;gap:8px;align-items:center}
+.logo i{font-style:normal;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:8px;padding:2px 8px;font-size:.9rem}
+main{max-width:1100px;margin:0 auto;padding:18px;display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){main{grid-template-columns:380px 1fr;align-items:start}.side{position:sticky;top:80px}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 30px rgba(0,0,0,.08);animation:up .5s ease both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h2{margin:0 0 12px;font-size:1.05rem}
+label{display:block;font-size:.8rem;color:var(--mu);margin:12px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--bd);background:var(--in);color:var(--tx);font:inherit;font-size:.92rem}
+textarea{min-height:86px;resize:vertical}
+:is(input,select,textarea,button):focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--in);color:var(--tx);border-radius:10px;padding:7px 12px;font-size:.82rem;transition:.2s}
+button:hover{transform:translateY(-1px);border-color:var(--ac2)}
+.go{width:100%;margin-top:16px;padding:13px;font-weight:600;font-size:1rem;color:#fff;border:0;background:linear-gradient(135deg,var(--ac),var(--ac2))}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:0}
+.pane{display:none}.pane.on{display:block}
+.t{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;cursor:pointer;background:var(--in);animation:up .4s ease both}
+.t.sel{border-color:var(--ac);box-shadow:0 0 0 2px rgba(255,45,85,.25)}
+.t span.tx{flex:1;font-size:.9rem;word-break:break-word}
+.c{font-size:.72rem;font-weight:600;padding:2px 7px;border-radius:99px;color:#fff;white-space:nowrap}
+.g{background:var(--ok)}.o{background:var(--wn)}.r{background:var(--bad)}
+.box{white-space:pre-wrap;background:var(--in);border:1px solid var(--bd);border-radius:12px;padding:12px;font-size:.86rem;max-height:340px;overflow:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{background:var(--in);border:1px solid var(--bd);border-radius:99px;padding:4px 10px;font-size:.78rem}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sk{display:none}.loading .sk{display:block}.loading .res{display:none}
+.sk div{height:44px;border-radius:12px;margin-bottom:8px;background:linear-gradient(90deg,var(--in) 25%,var(--bd) 50%,var(--in) 75%);background-size:200% 100%;animation:sh 1.1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.srp{display:flex;gap:12px}
+.th{background:linear-gradient(135deg,#334,#667);border-radius:10px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;text-align:center;padding:8px;font-size:.8rem}
+.srp .th{width:140px;flex:none}
+.srp h3{margin:0;color:#1a0dab;font-size:1rem;font-weight:500}
+:root[data-theme="dark"] .srp h3{color:#8ab4f8}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .srp h3{color:#8ab4f8}}
+.srp small,.vc small{color:var(--mu)}
+.vc{max-width:320px}.vc h3{font-size:.92rem;margin:8px 0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pv{display:grid;gap:18px}
+.fav{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:.86rem}
+.fav span{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);background:#111;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;z-index:20;font-size:.85rem}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{color:var(--mu);font-size:.88rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>▶</i> TubeTitle Studio</div>
+  <button id="theme" aria-label="Toggle dark or light mode">🌓 Theme</button>
+</header>
+
+<main>
+<section class="card side" aria-label="Inputs">
+  <h2>🎯 Video details</h2>
+  <label for="topic">Video topic / keywords</label>
+  <textarea id="topic" placeholder="e.g. iPhone 16 review, camera test, battery life"></textarea>
+  <div class="row">
+    <div><label for="niche">Niche</label>
+      <select id="niche"><option>Gaming</option><option>Tech</option><option>Education</option><option>Vlog</option><option>Music</option><option>Finance</option><option>Fitness</option></select></div>
+    <div><label for="tone">Tone</label>
+      <select id="tone"><option value="clickbait">Clickbait</option><option value="professional">Professional</option><option value="funny">Funny</option><option value="emotional">Emotional</option></select></div>
+  </div>
+  <div class="row">
+    <div><label for="lang">Language</label>
+      <select id="lang"><option value="en">English</option><option value="hi">Hindi</option><option value="hing">Hinglish</option></select></div>
+    <div><label for="aud">Target audience</label><input id="aud" placeholder="e.g. students"></div>
+  </div>
+  <label for="chan">Channel name (optional)</label><input id="chan" placeholder="Your channel">
+  <button class="go" id="gen">✨ Generate</button>
+</section>
+
+<section class="card" id="out" aria-live="polite">
+  <div class="tabs" role="tablist">
+    <button class="on" data-p="p1">Titles</button><button data-p="p2">Description</button><button data-p="p3">Tags</button>
+    <button data-p="p4">Preview</button><button data-p="p5">★ Favorites</button><button data-p="p6">History</button>
+  </div>
+  <div class="sk"><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="res">
+    <div class="pane on" id="p1"><p class="empty">Topic likhein aur Generate dabayein. Title par click karke preview dekhein.</p></div>
+    <div class="pane" id="p2"><div class="box" id="desc">Description yahan aayega.</div>
+      <div class="actions"><button id="cd">📋 Copy description</button><button id="dl">⬇ Download .txt</button></div></div>
+    <div class="pane" id="p3"><h2>SEO tags</h2><div class="chips" id="tags"></div><button id="ct">📋 Copy tags</button>
+      <h2 style="margin-top:16px">Hashtags</h2><div class="chips" id="hash"></div><button id="ch">📋 Copy hashtags</button></div>
+    <div class="pane" id="p4"><div class="pv"><div><h2>Search result</h2><div class="srp"><div class="th" id="th1">Thumbnail</div><div><h3 id="sh">Title</h3><small id="ss">youtube.com</small><br><small id="sd"></small></div></div></div>
+      <div><h2>Video card</h2><div class="vc"><div class="th" id="th2">Thumbnail</div><h3 id="vh">Title</h3><small id="vs">Channel • 12K views • 1 day ago</small></div></div></div></div>
+    <div class="pane" id="p5"></div>
+    <div class="pane" id="p6"></div>
+  </div>
+  <div class="actions" id="rg" style="display:none"><button id="regen">🔄 Regenerate</button></div>
+</section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+function toast(m){ const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toast.id); toast.id = setTimeout(() => t.classList.remove("show"), 1600); }
+async function copy(text){
+  try { await navigator.clipboard.writeText(text); }
+  catch(e){ const a = document.createElement("textarea"); a.value = text; document.body.appendChild(a); a.select(); try{document.execCommand("copy");}catch(_){} a.remove(); }
+  toast("Copied ✓");
+}
+const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+/* ---------- title templates: {t}=topic {n}=number {y}=year ---------- */
+const T = {
+ en: {
+  clickbait: ["{t}: You Won’t Believe What Happens Next!","I Tried {t} for {n} Days – SHOCKING Results","{n} {t} Secrets Nobody Tells You","STOP Doing {t} Wrong! (Do This Instead)"],
+  professional: ["{t}: The Complete Guide for {y}","{n} Proven {t} Tips That Actually Work","How to Master {t} Step by Step","{t} Explained: Everything You Need to Know"],
+  funny: ["I Tried {t} and It Went Horribly Wrong","{t} But Make It Hilarious","{n} Funniest {t} Fails Ever","Me Trying {t} Be Like..."],
+  emotional: ["The {t} Story That Changed My Life","Why {t} Means Everything to Me","I Wish I Knew This About {t} Sooner","This {t} Moment Made Me Cry"]
+ },
+ hi: {
+  clickbait: ["{t}: आगे जो हुआ यकीन नहीं होगा!","{n} दिन {t} करके देखा – चौंकाने वाले नतीजे","{t} के {n} राज़ जो कोई नहीं बताता","{t} गलत तरीके से मत करो! (ये करो)"],
+  professional: ["{t}: {y} की पूरी गाइड","{t} के {n} असरदार तरीके","{t} स्टेप बाय स्टेप सीखें","{t} पूरी जानकारी हिंदी में"],
+  funny: ["{t} ट्राई किया और सब गड़बड़ हो गया","{t} लेकिन मज़ेदार अंदाज़ में","{t} के {n} सबसे मज़ेदार फेल","जब मैंने {t} किया तो..."],
+  emotional: ["{t} की वो कहानी जिसने ज़िंदगी बदल दी","{t} मेरे लिए सब कुछ क्यों है","काश {t} के बारे में ये पहले पता होता","{t} का ये पल रुला गया"]
+ },
+ hing: {
+  clickbait: ["{t}: Aage Jo Hua Yakeen Nahi Hoga!","{n} Din {t} Try Kiya – SHOCKING Results","{t} Ke {n} Secrets Jo Koi Nahi Batata","{t} Galat Tarike Se Mat Karo! (Ye Karo)"],
+  professional: ["{t}: Complete Guide {y}","{t} Ke {n} Best Tips Jo Kaam Karte Hain","{t} Step by Step Seekhein","{t} Pura Explained in Hindi"],
+  funny: ["{t} Try Kiya Aur Sab Ulta Ho Gaya","{t} Lekin Full Comedy Style Mein","{t} Ke {n} Sabse Funny Fails","Jab Maine {t} Kiya To..."],
+  emotional: ["{t} Ki Wo Story Jisne Life Badal Di","{t} Mere Liye Sab Kuch Kyun Hai","Kaash {t} Ke Baare Mein Pehle Pata Hota","{t} Ka Ye Pal Rula Gaya"]
+ }
+};
+const L = {
+ en: { hook:"Want to know everything about", sum:"In this video we cover", ts:"⏱ Timestamps", cta:"👍 Like, 💬 comment and 🔔 subscribe so you never miss an upload!", soc:"🔗 Follow me", who:"Perfect for" },
+ hi: { hook:"जानिए सब कुछ", sum:"इस वीडियो में हम बात करेंगे", ts:"⏱ टाइमस्टैम्प", cta:"👍 लाइक करें, 💬 कमेंट करें और 🔔 सब्सक्राइब करें!", soc:"🔗 मुझसे जुड़ें", who:"खासकर" },
+ hing: { hook:"Jaaniye sab kuch", sum:"Is video mein hum baat karenge", ts:"⏱ Timestamps", cta:"👍 Like karein, 💬 comment karein aur 🔔 subscribe karein!", soc:"🔗 Mujhse judein", who:"Khaas kar" }
+};
+const NICHE_TAGS = {
+ Gaming:["gameplay","walkthrough","gaming","pc gaming","mobile gaming","live stream"], Tech:["tech","review","unboxing","gadgets","comparison","tech news"],
+ Education:["tutorial","learn","for beginners","study tips","explained","course"], Vlog:["vlog","daily vlog","lifestyle","my day","travel vlog","experience"],
+ Music:["music","cover","song","lyrics","remix","live performance"], Finance:["investing","money","personal finance","stock market","savings","passive income"],
+ Fitness:["workout","fitness","weight loss","home workout","diet","motivation"]
+};
+
+/* ---------- state ---------- */
+let S = { titles: [], sel: 0, desc: "", tags: [], hash: [], topic: "" };
+let favs = store.get("tts_favs", []), hist = store.get("tts_hist", []);
+
+/* ---------- generate ---------- */
+function build(){
+  const topicRaw = $("#topic").value.trim();
+  if(!topicRaw){ toast("Pehle topic likhein"); $("#topic").focus(); return false; }
+  const kw = topicRaw.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+  const t = kw[0].replace(/\b\w/g, c => c.toUpperCase());
+  const lang = $("#lang").value, tone = $("#tone").value, niche = $("#niche").value;
+  const aud = $("#aud").value.trim(), chan = $("#chan").value.trim();
+  const y = new Date().getFullYear();
+  const fmt = s => s.replace(/{t}/g, t).replace(/{n}/g, pick([3,5,7,10,15,21])).replace(/{y}/g, y);
+  const others = Object.keys(T[lang]).filter(k => k !== tone).flatMap(k => T[lang][k]);
+  S.titles = shuffle(T[lang][tone]).concat(shuffle(others).slice(0, 6)).map(fmt);
+  S.sel = 0; S.topic = t;
+
+  const l = L[lang];
+  S.desc =
+`${l.hook} ${t}? 🔥
+${aud ? l.who + " " + aud + ". " : ""}${l.sum}: ${kw.join(", ")}.
+
+${l.ts}
+00:00 Intro
+01:00 ${kw[1] ? kw[1] : t}
+03:00 ${kw[2] ? kw[2] : "Main points"}
+06:00 Final thoughts
+
+${l.cta}
+
+${l.soc}${chan ? " (" + chan + ")" : ""}
+Instagram: https://instagram.com/yourname
+Twitter/X: https://x.com/yourname
+Website: https://yourwebsite.com
+
+${hashFrom(kw, niche).map(h => "#" + h).join(" ")}`;
+
+  const base = NICHE_TAGS[niche];
+  const combos = kw.flatMap(k => [k, k + " " + y, "how to " + k, "best " + k, k + " " + pick(base)]);
+  S.tags = [...new Set(combos.concat(base, kw.map(k => k + " hindi")).map(s => s.toLowerCase()))].slice(0, 15);
+  S.hash = hashFrom(kw, niche).map(h => "#" + h);
+
+  hist.unshift({ topic: topicRaw, niche, tone, lang, aud, chan, first: S.titles[0], d: new Date().toLocaleString() });
+  hist = hist.slice(0, 15); store.set("tts_hist", hist);
+  return true;
+}
+function hashFrom(kw, niche){
+  return [...new Set([kw[0].replace(/\s+/g, ""), niche, "YouTube", "Trending", kw[1] ? kw[1].replace(/\s+/g, "") : "Viral"])].slice(0, 5);
+}
+function run(){
+  const box = $("#out");
+  if(!build()) return;
+  box.classList.add("loading");
+  setTimeout(() => { box.classList.remove("loading"); render(); $("#rg").style.display = "flex"; }, 650);
+}
+
+/* ---------- render ---------- */
+function cls(n){ return n <= 60 ? "g" : n <= 70 ? "o" : "r"; }
+function render(){
+  $("#p1").innerHTML = S.titles.map((t, i) =>
+   `<div class="t ${i === S.sel ? "sel" : ""}" data-i="${i}" style="animation-delay:${i * 40}ms">
+      <span class="tx">${esc(t)}</span><span class="c ${cls(t.length)}">${t.length}</span>
+      <button data-a="copy" aria-label="Copy title">📋</button><button data-a="fav" aria-label="Save favorite">${favs.includes(t) ? "★" : "☆"}</button></div>`).join("");
+  $("#desc").textContent = S.desc;
+  $("#tags").innerHTML = S.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("");
+  $("#hash").innerHTML = S.hash.map(t => `<span class="chip">${esc(t)}</span>`).join("");
+  preview(); renderFavs(); renderHist();
+}
+function preview(){
+  const t = S.titles[S.sel] || "Title", d = S.desc.split("\n").join(" ").slice(0, 150) + "…";
+  const cut = t.length > 70 ? t.slice(0, 67) + "…" : t;
+  $("#sh").textContent = cut; $("#vh").textContent = t; $("#sd").textContent = d;
+  $("#th1").textContent = $("#th2").textContent = S.topic || "Thumbnail";
+  $("#vs").textContent = ($("#chan").value.trim() || "Your Channel") + " • 12K views • 1 day ago";
+}
+function renderFavs(){
+  $("#p5").innerHTML = favs.length ? favs.map((f, i) => `<div class="fav"><span>${esc(f)}</span><button data-c="${i}">📋</button><button data-r="${i}">✕</button></div>`).join("") : `<p class="empty">Abhi koi favorite nahi. Title ke saath ☆ dabayein.</p>`;
+}
+function renderHist(){
+  $("#p6").innerHTML = hist.length ? hist.map((h, i) => `<div class="fav"><span><b>${esc(h.topic.slice(0, 40))}</b><br><small>${esc(h.first)} · ${esc(h.d)}</small></span><button data-h="${i}">↺ Reuse</button></div>`).join("") + `<div class="actions"><button id="clr">🗑 Clear history</button></div>` : `<p class="empty">History khaali hai.</p>`;
+}
+
+/* ---------- events ---------- */
+$("#gen").onclick = run;
+$("#regen").onclick = run;
+$("#topic").addEventListener("keydown", e => { if(e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
+$$(".tabs button").forEach(b => b.onclick = () => {
+  $$(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  $$(".pane").forEach(p => p.classList.toggle("on", p.id === b.dataset.p));
+});
+$("#p1").onclick = e => {
+  const row = e.target.closest(".t"); if(!row) return;
+  const i = +row.dataset.i, a = e.target.dataset.a;
+  if(a === "copy"){ copy(S.titles[i]); return; }
+  if(a === "fav"){
+    const t = S.titles[i]; favs = favs.includes(t) ? favs.filter(x => x !== t) : [t, ...favs];
+    store.set("tts_favs", favs); toast(favs.includes(t) ? "Saved ★" : "Removed"); render(); return;
+  }
+  S.sel = i; $$(".t").forEach(r => r.classList.toggle("sel", +r.dataset.i === i)); preview();
+};
+$("#p5").onclick = e => {
+  if(e.target.dataset.c) copy(favs[+e.target.dataset.c]);
+  if(e.target.dataset.r){ favs.splice(+e.target.dataset.r, 1); store.set("tts_favs", favs); renderFavs(); if(S.titles.length) render(); }
+};
+$("#p6").onclick = e => {
+  if(e.target.id === "clr"){ hist = []; store.set("tts_hist", hist); renderHist(); }
+  if(e.target.dataset.h){
+    const h = hist[+e.target.dataset.h];
+    $("#topic").value = h.topic; $("#niche").value = h.niche; $("#tone").value = h.tone; $("#lang").value = h.lang; $("#aud").value = h.aud; $("#chan").value = h.chan;
+    toast("Inputs restored"); run();
+  }
+};
+$("#cd").onclick = () => copy(S.desc);
+$("#ct").onclick = () => copy(S.tags.join(", "));
+$("#ch").onclick = () => copy(S.hash.join(" "));
+$("#dl").onclick = () => {
+  if(!S.titles.length){ toast("Pehle generate karein"); return; }
+  const txt = "TITLES\n" + S.titles.map((t, i) => (i + 1) + ". " + t).join("\n") + "\n\nDESCRIPTION\n" + S.desc + "\n\nTAGS\n" + S.tags.join(", ");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain" })); a.download = "youtube-title-description.txt"; a.click();
+  toast("Downloaded ✓");
+};
+/* theme toggle (remembered) */
+const root = document.documentElement;
+const saved = store.get("tts_theme", null); if(saved) root.dataset.theme = saved;
+$("#theme").onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark"; store.set("tts_theme", root.dataset.theme);
+};
+renderFavs(); renderHist();
+</script>
+</body>
+</html>
